@@ -1,3 +1,4 @@
+// src/EquationSolver.js
 import React, { useState, useEffect } from "react";
 import {
   BarChart,
@@ -16,11 +17,15 @@ function EquationSolver() {
   const [error, setError] = useState("");
   const [history, setHistory] = useState([]);
 
+  // 🌐 Use your Render backend instead of localhost
+  const API_BASE = "https://lab2-basic-algebra.onrender.com";
+
+
   // 🔹 Load previous attempts from MongoDB on mount
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://localhost:5000/attempts");
+        const response = await fetch(`${API_BASE}/attempts`);
         const data = await response.json();
 
         if (data.success) {
@@ -47,7 +52,7 @@ function EquationSolver() {
 
   const solveEquation = async () => {
     try {
-      const response = await fetch("http://localhost:5000/solve", {
+      const response = await fetch(`${API_BASE}/solve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ equation }),
