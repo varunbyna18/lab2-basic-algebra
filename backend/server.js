@@ -1,15 +1,14 @@
 const http = require("http");
 const { MongoClient } = require("mongodb");
-const url = "mongodb://127.0.0.1:27017";
+
+// ✅ Use MongoDB Atlas connection string from Render environment variable
+const url = process.env.MONGO_URI;
 const client = new MongoClient(url);
 const dbName = "lab2_algebra";
 
+// Function to solve equations
 async function solveEquation(equation) {
-  // Remove spaces
   equation = equation.replace(/\s+/g, "");
-
-  // Match equations like "x+5=10" OR "5+x=10"
-  const match = equation.match(/^([0-9]*x|x[0-9]*|\d+[\+\-]x|x[\+\-]\d+|\d+x|\w+)[\+\-]?\d*=.*$/);
 
   if (!equation.includes("=")) return { success: false, message: "⚠️ Invalid equation" };
 
@@ -50,6 +49,7 @@ async function solveEquation(equation) {
   return { success: false, message: "⚠️ Unsupported equation" };
 }
 
+// Start server
 async function start() {
   await client.connect();
   console.log("✅ MongoDB connected");
@@ -103,8 +103,10 @@ async function start() {
     }
   });
 
-  server.listen(5000, () => {
-    console.log("✅ Server running at http://localhost:5000");
+  // ✅ Use PORT from Render, fallback to 5000 locally
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
   });
 }
 
